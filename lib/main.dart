@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
   ///Anotación que indica que se está sobrescribiendo un método de la clase padre
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'login_animation_pro_8sc',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:rive/rive.dart';
+import 'dart:async'; // 👈 AQUÍ LE MODIFIQUÉ (para usar Timer)
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -20,8 +21,49 @@ class _LoginScreenState extends State<LoginScreen> {
   //Variable para mover los ojos:
   SMINumber? numLook;
 
-  //Nueva bariable para controlar la visibilidad de la contrasela
+  //Nueva variable para controlar la visibilidad de la contraseña
   bool isPasswordVisible = false;
+
+  // 👈 AQUÍ LE MODIFIQUÉ (focus para los TextFields)
+  final FocusNode emailFocusNode = FocusNode();
+  final FocusNode passwordFocusNode = FocusNode();
+
+  // 👈 AQUÍ LE MODIFIQUÉ (debounce timer para detectar cuando deja de escribir)
+  Timer? typingTimer;
+
+  // 👇 NUEVO: variables para guardar email y password
+  String emailInput = '';
+  String passwordInput = '';
+
+  @override
+  void initState() {
+    super.initState();
+
+    // 👈 AQUÍ LE MODIFIQUÉ (listener cuando email pierde el foco)
+    emailFocusNode.addListener(() {
+      if (!emailFocusNode.hasFocus) {
+        if (isChecking != null) isChecking!.change(false);
+      }
+    });
+
+    // 👈 AQUÍ LE MODIFIQUÉ (listener para password: tapar ojos al entrar, bajarlos al salir)
+    passwordFocusNode.addListener(() {
+      if (passwordFocusNode.hasFocus) {
+        if (isHandsUp != null) isHandsUp!.change(true);
+      } else {
+        if (isHandsUp != null) isHandsUp!.change(false);
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    // 👈 AQUÍ LE MODIFIQUÉ (limpiar FocusNode y Timer)
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    typingTimer?.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,11 +75,9 @@ class _LoginScreenState extends State<LoginScreen> {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20),
           child: Column(
-            //Axis o eje vertical
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                //Ancho de la pantalla calculado por el MQ
                 width: size.width,
                 height: 200,
                 child: RiveAnimation.asset(
@@ -48,45 +88,46 @@ class _LoginScreenState extends State<LoginScreen> {
                       artboard,
                       "Login Machine",
                     );
-                    //verificar si hay un controlador
                     if (controller == null) return;
-                    //Agregar  el controlador al tablero
                     artboard.addController(controller!);
                     isChecking = controller!.findSMI('isChecking');
                     isHandsUp = controller!.findSMI('isHandsUp');
                     trigSuccess = controller!.findSMI('trigSuccess');
                     trigFail = controller!.findSMI('trigFail');
 
-                    //Variable para mover los ojos
                     numLook = controller!.findSMI('numLook');
                   },
                 ),
               ),
-              //Animación
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               //Email
               TextField(
+                focusNode: emailFocusNode, // 👈 AQUÍ LE MODIFIQUÉ
                 onChanged: (value) {
+                  emailInput = value; // 👈 Guardamos el valor del email
+
                   if (isHandsUp != null) {
-                    //no subir las manos al escribir email
                     isHandsUp!.change(false);
                   }
-
-                  //verifica que este SMI no sea nulo
                   if (isChecking == null) return;
                   isChecking!.change(true);
 
-                  if (numLook == null) return;
-                  //Obtener el largo del texto
-                  double lookValue = (value.length.clamp(0, 80)) * 1.5;
-                  numLook!.change(lookValue);
+                  if (numLook != null) {
+                    double lookValue = (value.length.clamp(0, 80)) * 1.5;
+                    numLook!.change(lookValue);
+                  }
+
+                  // 👈 AQUÍ LE MODIFIQUÉ (debounce: cuando deje de escribir, deja de mirar)
+                  typingTimer?.cancel();
+                  typingTimer = Timer(const Duration(seconds: 2), () {
+                    if (isChecking != null) isChecking!.change(false);
+                  });
                 },
                 keyboardType: TextInputType.emailAddress,
                 decoration: InputDecoration(
                   hintText: "Email",
                   prefixIcon: const Icon(Icons.mail),
                   border: OutlineInputBorder(
-                    //Bordes Circulares
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -94,23 +135,20 @@ class _LoginScreenState extends State<LoginScreen> {
               const SizedBox(height: 10),
               //Password
               TextField(
+                focusNode: passwordFocusNode, // 👈 AQUÍ LE MODIFIQUÉ
                 onChanged: (value) {
+                  passwordInput = value; // 👈 Guardamos el valor del password
+
                   if (isChecking != null) {
-                    //no mover ojos al escribir eamil
                     isChecking!.change(false);
                   }
-                  //verifica que este SMI no sea nulo
                   if (isHandsUp == null) return;
                   isHandsUp!.change(true);
                 },
-                //Para que se oculte la contraseña
                 obscureText: !isPasswordVisible,
-
-                ///Nueva propiedad
                 decoration: InputDecoration(
                   hintText: "Password",
                   prefixIcon: const Icon(Icons.lock),
-                  //Nuevo icono para mostrar u ocultar la contraseña
                   suffixIcon: IconButton(
                     icon: Icon(
                       isPasswordVisible
@@ -124,7 +162,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     },
                   ),
                   border: OutlineInputBorder(
-                    //Bordes Circulares
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
@@ -138,17 +175,32 @@ class _LoginScreenState extends State<LoginScreen> {
                   style: TextStyle(decoration: TextDecoration.underline),
                 ),
               ),
-              //Botón de login
               const SizedBox(height: 10),
               MaterialButton(
                 minWidth: size.width,
                 height: 50,
                 color: Colors.blue,
-                //Forma del Botón
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  FocusScope.of(
+                    context,
+                  ).unfocus(); // 👈 Cierra teclado al presionar Login
+
+                  // 👇 LÓGICA PARA trigSuccess Y trigFail
+                  const correctEmail = 'jdcs2303201@gmail.com';
+                  const correctPassword = 'Jair123';
+
+                  if (emailInput == correctEmail &&
+                      passwordInput == correctPassword) {
+                    // Si ambos son correctos → éxito
+                    if (trigSuccess != null) trigSuccess!.fire();
+                  } else {
+                    // Si alguno falla → fracaso
+                    if (trigFail != null) trigFail!.fire();
+                  }
+                },
                 child: const Text(
                   "Login",
                   style: TextStyle(color: Colors.white),
@@ -158,7 +210,6 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 width: size.width,
                 child: Row(
-                  //Centrar texto
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text("Don't have an account?"),
@@ -168,7 +219,6 @@ class _LoginScreenState extends State<LoginScreen> {
                         "Register",
                         style: TextStyle(
                           color: Colors.black,
-                          //Negritas:
                           fontWeight: FontWeight.bold,
                           decoration: TextDecoration.underline,
                         ),

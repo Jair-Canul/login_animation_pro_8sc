@@ -1,26 +1,60 @@
 # 🔐 Login Animation Pro  
 
-Bienvenido a **Login Animation Pro**, una aplicación desarrollada en **Flutter** con el lenguaje **Dart**, diseñada para ofrecer una **pantalla de inicio de sesión interactiva** y visualmente atractiva.  
+Welcome to **Login Animation Pro**, an application developed in **Flutter** using **Dart**, designed to provide an **interactive login screen** with dynamic animations that respond to user interactions.  
 
-## ✨ Funcionalidades  
-- Formulario de login con validación.  
-- Botón para mostrar/ocultar contraseña.  
-- Animaciones dinámicas (archivo `.riv` en `assets/`).  
-- Diseño minimalista y adaptable a distintos dispositivos.  
+## ✨ Main Features  
+- Login form with **predefined validation**.  
+- **Show or hide password** using a button in the corresponding field.  
+- **Interactive bear animation** (Rive `.riv` file) that:  
+  - Covers its eyes when typing the password.  
+  - Looks at the text while typing the email.  
+  - Celebrates when entering correct credentials (`trigSuccess`).  
+  - Gets sad when entering incorrect credentials (`trigFail`).  
+- Minimalist and responsive design for different devices.  
 
-## 📂 Archivos principales  
-- `lib/main.dart` → Punto de entrada de la app.  
-- `lib/screens/login_screen.dart` → Pantalla de login con animación.  
-- `assets/animated_login_character.riv` → Archivo de animación Rive.  
-- `pubspec.yaml` → Dependencias y configuración de assets.  
+## 📂 Main Files  
+- `lib/main.dart` → Entry point of the app.  
+- `lib/screens/login_screen.dart` → Login screen with animation and interaction.  
+- `assets/animated_login_character.riv` → Rive bear animation file.  
+- `pubspec.yaml` → Dependencies and asset configuration.  
 
-## ⚙️ Tecnologías y herramientas  
+## ⚙️ Technologies and Tools  
 - [Flutter](https://flutter.dev/)  
 - [Dart](https://dart.dev/)  
-- [Rive](https://rive.app/)  
+- [Rive](https://rive.app/) → [Interactive bear animation](https://rive.app/marketplace/3645-7621-remix-of-login-machine/)  
 - [Visual Studio Code](https://code.visualstudio.com/)  
 
-## 🚀 Ejecución del proyecto  
-1. Clonar este repositorio:  
-   ```bash
+## 🚀 How to Run the Project  
+1. Clone this repository:  
+   
    git clone https://github.com/Jair-Canul/login_animation_pro_8sc.git
+2. Navigate to the project folder:
+
+- cd login_animation_pro_8sc
+
+
+3. Install dependencies:
+
+- flutter pub get
+
+
+4. Run the application:
+
+- flutter run
+
+## 📝 Code Details
+
+- The email TextField activates the eye animation to follow the typed text.
+
+- The password TextField activates the hands covering the eyes animation.
+
+- The Login button triggers:
+
+- trigSuccess → if the email and password are correct (jdcs2303201@gmail.com / Jair123).
+
+- trigFail → if either the email or password is incorrect.
+
+- debounce timer is used to detect when the user stops typing and update the animation.
+
+## 🎬 Demo Aplication
+![Login Animation Demo](assets/demo-login.gif)
