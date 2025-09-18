@@ -1,6 +1,19 @@
-# 🔐 Login Animation Pro  
+## 🔐 Login Animation Pro  
 
 Welcome to **Login Animation Pro**, an application developed in **Flutter** using **Dart**, designed to provide an **interactive login screen** with dynamic animations that respond to user interactions.  
+
+## 📚 Course Info
+
+- Course Name: Mobile Application Programming
+
+-CREATED BY : JAIR DAVID CANUL SERRALTA
+
+- Instructor: Rodrigo Fidel Gaxiola Sosa
+
+## 🖼 About Rive & State Machine  
+- [Rive](https://rive.app/) is a powerful tool for **creating interactive animations** that can be integrated into apps.  
+- **State Machines** in Rive allow animations to **react dynamically** to events and user input, like the bear responding to email/password input in this app.  
+
 
 ## ✨ Main Features  
 - Login form with **predefined validation**.  
@@ -17,6 +30,7 @@ Welcome to **Login Animation Pro**, an application developed in **Flutter** usin
 - `lib/screens/login_screen.dart` → Login screen with animation and interaction.  
 - `assets/animated_login_character.riv` → Rive bear animation file.  
 - `pubspec.yaml` → Dependencies and asset configuration.  
+![Proyect](assets/archive.png)
 
 ## ⚙️ Technologies and Tools  
 - [Flutter](https://flutter.dev/)  
@@ -58,3 +72,7 @@ Welcome to **Login Animation Pro**, an application developed in **Flutter** usin
 
 ## 🎬 Demo Aplication
 ![Login Animation Demo](assets/demo-login.gif)
+
+## 🎨 Credits
+
+- Bear animation created by Rive Marketplace Creator [dart](https://rive.app/marketplace/3645-7621-remix-of-login-machine/)
